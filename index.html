@@ -1,1 +1,358 @@
-index.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Tweaks & Extensions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/DOMPurify/3.0.6/purify.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #181820;
+    --surface: #1e1e28;
+    --surface2: #252530;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8e8f0;
+    --muted: #8888a0;
+    --accent: #7c6af0;
+    --accent2: #3ecfcf;
+    --accent3: #f07c6a;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(124,106,240,0.12) 0%, rgba(62,207,207,0.06) 50%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .hero h1 {
+    font-family: var(--mono);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #e8e8f0 30%, var(--accent) 70%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .hero p {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  /* ── ACCORDION ── */
+  .octe-accordion { display: flex; flex-direction: column; gap: 0; margin-top: 48px; }
+
+  .octe-item { border-bottom: 0.5px solid var(--border); }
+  .octe-item:last-child { border-bottom: none; }
+
+  .octe-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease, color 0.15s ease;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: var(--sans);
+  }
+
+  .octe-header:hover { background: rgba(255,255,255,0.03); }
+
+  .octe-arrow {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(0deg);
+  }
+
+  .octe-header.open .octe-arrow { transform: rotate(180deg); }
+
+  .octe-title { flex: 1; }
+
+  .octe-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+    padding: 0 20px;
+  }
+
+  .octe-content.open {
+    max-height: 2000px;
+    padding: 0 20px 16px 20px;
+  }
+
+  .octe-markdown {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .octe-markdown p { margin-bottom: 12px; }
+  .octe-markdown p:last-child { margin-bottom: 0; }
+
+  .octe-markdown h1, .octe-markdown h2, .octe-markdown h3 {
+    font-weight: 500;
+    color: var(--text);
+    margin: 12px 0 8px 0;
+  }
+
+  .octe-markdown h1 { font-size: 18px; }
+  .octe-markdown h2 { font-size: 16px; }
+  .octe-markdown h3 { font-size: 15px; }
+
+  .octe-markdown ul, .octe-markdown ol {
+    margin: 8px 0 12px 20px;
+    color: var(--muted);
+  }
+
+  .octe-markdown li { margin-bottom: 4px; }
+
+  .octe-markdown code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text);
+  }
+
+  .octe-markdown pre {
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    padding: 12px;
+    overflow: auto;
+    margin: 12px 0;
+    position: relative;
+  }
+
+  .octe-markdown pre code {
+    background: none;
+    padding: 0;
+    color: var(--text);
+    display: block;
+    font-size: 12px;
+    line-height: 1.5;
+    font-family: var(--mono);
+  }
+
+  .octe-code-copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    background: var(--bg3);
+    border: 0.5px solid var(--border2);
+    border-radius: 4px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: var(--mono);
+  }
+
+  .octe-code-copy:hover {
+    background: var(--surface);
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .octe-code-copy.copied { color: #4ade80; }
+
+  .octe-markdown blockquote {
+    border-left: 3px solid var(--border2);
+    padding-left: 12px;
+    margin: 8px 0;
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+  }
+
+  .octe-markdown a {
+    color: var(--accent2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .octe-markdown a:hover { border-bottom-color: var(--accent2); }
+
+  .octe-markdown hr {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 16px 0;
+  }
+
+  .octe-markdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  .octe-markdown th, .octe-markdown td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .octe-markdown th {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeUp 0.5s ease both; }
+
+  @media (max-width: 600px) {
+    main { padding: 0 16px 60px; }
+    .hero { padding: 60px 0 40px; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <div class="hero">
+    <h1>OpenClaw Tweaks & Extensions</h1>
+    <p>Configuration and feature guides.</p>
+  </div>
+
+  <div class="octe-accordion" id="accordion"></div>
+</main>
+
+<script>
+  const items = [
+    {
+      title: "Getting started",
+      markdown: "# Welcome\n\nThis is where you add your tweaks and extensions documentation.\n\n- Edit the `items` array in the script\n- Each item has a `title` and `markdown` field\n- Markdown renders with proper formatting\n\n```javascript\nconst items = [\n  { title: 'Your title', markdown: 'Your **markdown** here' }\n];\n```"
+    },
+    {
+      title: "Installation",
+      markdown: "## How to set up\n\n1. Clone or download the file\n2. Open in your browser\n3. Edit the `items` array with your content\n\n```bash\ncp openclaw-tweaks.html ~/Desktop\n```\n\nThat's it. No build needed."
+    },
+    {
+      title: "Markdown features",
+      markdown: "### Supported syntax\n\n**Bold**, *italic*, `code`, and [links](https://example.com)\n\n- Lists work\n- Nested too\n  - Like this\n\n```python\nprint('Code blocks with syntax highlighting')\n```\n\n> Blockquotes also work"
+    }
+  ];
+
+  const accordion = document.getElementById('accordion');
+
+  items.forEach((item) => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'octe-item';
+
+    const header = document.createElement('button');
+    header.className = 'octe-header';
+    header.innerHTML = `<span class="octe-arrow">▼</span><span class="octe-title">${item.title}</span>`;
+
+    const content = document.createElement('div');
+    content.className = 'octe-content';
+
+    marked.setOptions({ breaks: true, gfm: true });
+    let html = marked.parse(item.markdown);
+    html = DOMPurify.sanitize(html);
+    content.innerHTML = `<div class="octe-markdown">${html}</div>`;
+
+    let isOpen = false;
+    header.addEventListener('click', () => {
+      isOpen = !isOpen;
+      header.classList.toggle('open');
+      content.classList.toggle('open');
+    });
+
+    itemDiv.appendChild(header);
+    itemDiv.appendChild(content);
+    accordion.appendChild(itemDiv);
+
+    setTimeout(() => {
+      const preBlocks = content.querySelectorAll('pre');
+      preBlocks.forEach(pre => {
+        const btn = document.createElement('button');
+        btn.className = 'octe-code-copy';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const code = pre.textContent;
+          navigator.clipboard.writeText(code).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'Copy';
+              btn.classList.remove('copied');
+            }, 2000);
+          });
+        });
+        pre.style.position = 'relative';
+        pre.appendChild(btn);
+      });
+    }, 0);
+  });
+</script>
+
+</body>
+</html>
