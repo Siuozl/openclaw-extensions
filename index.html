@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/DOMPurify/3.0.6/purify.min.js"></script>
 <style>
   :root {
     --bg: #0a0a0f;
@@ -315,7 +314,6 @@
 
     marked.setOptions({ breaks: true, gfm: true });
     let html = marked.parse(item.markdown);
-    html = DOMPurify.sanitize(html);
     content.innerHTML = `<div class="octe-markdown">${html}</div>`;
 
     let isOpen = false;
