@@ -284,24 +284,19 @@
 </main>
 
 <script>
-  const items = [
-    {
-      title: "Getting started",
-      markdown: "# Welcome\n\nThis is where you add your tweaks and extensions documentation.\n\n- Edit the `items` array in the script\n- Each item has a `title` and `markdown` field\n- Markdown renders with proper formatting\n\n```javascript\nconst items = [\n  { title: 'Your title', markdown: 'Your **markdown** here' }\n];\n```"
-    },
-    {
-      title: "Installation",
-      markdown: "## How to set up\n\n1. Clone or download the file\n2. Open in your browser\n3. Edit the `items` array with your content\n\n```bash\ncp openclaw-tweaks.html ~/Desktop\n```\n\nThat's it. No build needed."
-    },
-    {
-      title: "Markdown features",
-      markdown: "### Supported syntax\n\n**Bold**, *italic*, `code`, and [links](https://example.com)\n\n- Lists work\n- Nested too\n  - Like this\n\n```python\nprint('Code blocks with syntax highlighting')\n```\n\n> Blockquotes also work"
-    }
-  ];
-
   const accordion = document.getElementById('accordion');
 
-  items.forEach((item) => {
+  fetch('tweaks.json')
+    .then(r => r.json())
+    .then(items => {
+      return Promise.all(items.map(item => 
+        fetch(item.file)
+          .then(r => r.text())
+          .then(markdown => ({ ...item, markdown }))
+      ));
+    })
+    .then(items => {
+      items.forEach((item) => {
     const itemDiv = document.createElement('div');
     itemDiv.className = 'octe-item';
 
@@ -349,7 +344,9 @@
         pre.appendChild(btn);
       });
     }, 0);
-  });
+      });
+    })
+    .catch(e => console.error('Failed to load tweaks.json:', e));
 </script>
 
 </body>
