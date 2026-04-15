@@ -9,4 +9,10 @@ creator-link: https://siuozl.github.io
 COMMANDS
 (subcommands are marked by ~)
 mediacontrol / mediac / mc
-~ on / enable - 
+~ on / enable - Activate the extension, therefore the bot should listen for any command.
+~ off / disable - Deactivate the extension, therefore the commands won't trigger anything.
+
+COMMANDS ONLY USABLE WHEN ACTIVATED
+p / play / pause - On the user's device, simulate the keypress for SPACE
+f / full / fullscreen / unfull / unfullscreen - Toggle Fullscreen on whatever media is playing
+v / volume <volume> - Set volume to whatever was specified. If not specified, prompt for it.
