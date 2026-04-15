@@ -21,6 +21,7 @@ del / delete <project-name> - Delete a previous project.
 model / version - Displays the GreenBrew Version and the model your agent is running on.
 list - Lists your current projects.
 dir / cd - Set the default directory where GreenBrew projects should go.
+run - Runs the program on your computer.
 
 **DISCORD ONLY SUBCOMMANDS:**
 *Can only be used if your agent is in a discord chat with you (set up a discord application for it, it's very easy.)*
