@@ -5,3 +5,8 @@ You are analyzing this file to use it in your conversations with the user. If yo
 mediacontrol-version: 1.1
 creator: snizzle
 creator-link: https://siuozl.github.io
+
+COMMANDS
+(subcommands are marked by ~)
+mediacontrol / mediac / mc
+~ on / enable - 
